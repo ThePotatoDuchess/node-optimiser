@@ -5,7 +5,6 @@ from time import sleep
 import cProfile
 import pickle
 import concurrent.futures
-import psutil
 def index(partial):
     
     #pathName = 0
@@ -283,7 +282,7 @@ def calculate(collection):
             options[item] = good2
         else:
             print('do this lazy butt')
-    
+        
     sm = 1
     for resource in options.keys():
         sm *= len(options[resource])
@@ -414,6 +413,7 @@ def distance(pos,options):
         dist = distsm/total
     else:
         dist = 0
+
     return dist
 
 
@@ -435,9 +435,16 @@ def incriment(position,base,choices,good2,nums,star):
         if choices[position] < base:
             valid = isValid(choices,nums,star)
             if valid:
-                temp = np.zeros(len(choices),dtype=int)
-                for i in range(0,len(temp)):
+                if star == -1:
+                    temp = np.zeros(len(choices),dtype=int)
+                else:
+                    temp = np.zeros(len(choices)+1,dtype=int)
+                #print(len(choices))
+                for i in range(0,len(choices)):
                     temp[i] = choices[i]
+                if star != -1:
+                    temp[len(choices)] = star
+
                 good2.append(temp)
             
         else:
@@ -555,7 +562,7 @@ def loadset():
 
     possible = {'efficiency':[1,2,"if not zero ignores impure in favor of normal/pure,drastically decreases computation time, but may give worse results\n"],
                 'useint':[1,1,"uses ints for all values instead of floats,less acurate but faster\n"],
-                'multithread':[0,1,"adds multithreading, may not improve performance\n"],
+                'multithread':[1,1,"adds multithreading, may not improve performance\n"],
                 'confirm':[1,1,"confirm before doing stuff\n"]}
     for i in possible.keys():
         if i not in settings.keys():
@@ -626,8 +633,8 @@ while go:
             print('calculate with this collection?(y/n)')
             if confirm():
                 good2 = []
-                cProfile.run('calculate(collection)') 
-                #calculate(collection)
+                #cProfile.run('calculate(collection)') 
+                calculate(collection)
                 eep = 5
         case '9':
             settings = chngset(settings)
